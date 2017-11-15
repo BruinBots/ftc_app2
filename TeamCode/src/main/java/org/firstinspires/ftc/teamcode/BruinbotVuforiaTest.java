@@ -141,16 +141,16 @@ public class BruinbotVuforiaTest extends LinearOpMode {
          * example "StonesAndChips", datasets can be found in in this project in the
          * documentation directory.
          */
-        VuforiaTrackables relicVuMark = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable redTarget = relicVuMark.get(0);
+        VuforiaTrackables stonesAndChips = this.vuforia.loadTrackablesFromAsset("StonesAndChips");
+        VuforiaTrackable redTarget = stonesAndChips.get(0);
         redTarget.setName("RedTarget");  // Stones
 
-        VuforiaTrackable blueTarget  = relicVuMark.get(1);
+        VuforiaTrackable blueTarget  = stonesAndChips.get(1);
         blueTarget.setName("BlueTarget");  // Chips
 
         /** For convenience, gather together all the trackable objects in one easily-iterable collection */
         List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
-        allTrackables.addAll(relicVuMark);
+        allTrackables.addAll(stonesAndChips);
 
         /**
          * We use units of mm here because that's the recommended units of measurement for the
@@ -298,7 +298,7 @@ public class BruinbotVuforiaTest extends LinearOpMode {
         waitForStart();
 
         /** Start tracking the data sets we care about. */
-        relicVuMark.activate();
+        stonesAndChips.activate();
 
         while (opModeIsActive()) {
 

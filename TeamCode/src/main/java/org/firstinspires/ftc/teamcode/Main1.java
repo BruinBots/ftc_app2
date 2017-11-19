@@ -41,16 +41,16 @@ public class Main1 extends LinearOpMode {
         rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
         forkLift = hardwareMap.get(DcMotor.class, "forkLift");
         //This section resets the forkLift... The forkLift MUST start in lowest position!
-        forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoders
+        /*forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoders
         while (forkLift.getCurrentPosition() != 0) { //Ensures encoders are zero
             forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             telemetry.update(); //Needed within all loops
         }
         forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Sets mode to use encoders setMode() is used instead of setChannelMode(), which is now deprecated
         forkLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+*/
         //forkLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+        forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize the servos to the mid position
         leftServo.setPosition(MID_SERVO);
         rightServo.setPosition(MID_SERVO);
@@ -109,11 +109,12 @@ public class Main1 extends LinearOpMode {
                 liftUp /= max;
                 liftDown /= max;
             }
-        /*
+
           forkLift.setPower(liftUp);
           forkLift.setPower(liftDown);
-*/
-            if ((liftUp != 0) || (liftDown != 0)) { // Arm is being commanded
+
+
+         /*   if ((liftUp != 0) || (liftDown != 0)) { // Arm is being commanded
                 if (liftUp > liftDown) {  // Arm is commanded upwards
                     orderedPosition += 500;
                     forkLift.setTargetPosition(orderedPosition); //Sets motor to move 1440 ticks (1440 is one rotation for Tetrix motors)
@@ -137,6 +138,7 @@ public class Main1 extends LinearOpMode {
                     forkLift.setPower(0);
                 }
             }
+*/
 // ************* open/close servoclaw with bumpers *********************** //
 
             //closes servo

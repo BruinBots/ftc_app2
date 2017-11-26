@@ -29,6 +29,7 @@ public class HardwareBruinbot
     public DcMotor forkLift    = null;
     public Servo leftServo    = null;
     public Servo rightServo   = null;
+    public Servo sensorServo = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -44,9 +45,9 @@ public class HardwareBruinbot
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap hwMap) {
         // Save reference to Hardware map
-        hwMap = ahwMap;
+        hwMap = hwMap;
 
         // Define and Initialize Motors
         leftWheel   = hwMap.dcMotor.get("leftWheel");
@@ -54,6 +55,7 @@ public class HardwareBruinbot
         forkLift    = hwMap.dcMotor.get("forkLift");
         leftWheel.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightWheel.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Set all motors to zero power
         leftWheel.setPower(0);
@@ -65,12 +67,16 @@ public class HardwareBruinbot
         leftWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         forkLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // forkLift.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
 
         // Define and initialize ALL installed servos.
         leftServo = hwMap.servo.get("leftServo");
         rightServo = hwMap.servo.get("rightServo");
         leftServo.setPosition(MID_SERVO);
         rightServo.setPosition(MID_SERVO);
+
+        sensorServo = hwMap.servo.get("sensorServo");
+        sensorServo.setPosition(0);
     }
 
     /***

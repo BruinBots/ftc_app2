@@ -34,18 +34,11 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.Locale;
 
 /*
  * This is an example LinearOpMode that shows how to use
@@ -56,9 +49,9 @@ import java.util.Locale;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Autonomous(name = "RohanBruinBotAuto", group = "Rohan")
+@Autonomous(name = "RohanBruinBotAutoBlue", group = "Rohan")
 //@Disabled                            // Comment this out to add to the opmode list
-public class BruinAutonomous extends LinearOpMode {
+public class BruinAutonomousBlue extends LinearOpMode {
 
     /**
      * Note that the REV Robotics Color-Distance incorporates two sensors into one device.
@@ -156,15 +149,15 @@ public class BruinAutonomous extends LinearOpMode {
                     (int) (colorSensor.blue() * SCALE_FACTOR),
                     hsvValues);
 
-            if (colorSensor.red() > colorSensor.blue()) {
-                telemetry.addData("Red!!!!  ", colorSensor.red());
+            if (colorSensor.red() < colorSensor.blue()) {
+                telemetry.addData("Blue!!!!  ", colorSensor.red());
                 turnLeft (0.15, 0.05);
                 sleep(1000);
                 sensorServo.setPosition(0);
                 turnRight(0.15, 0.05);
             }
             else {
-                telemetry.addData("Blue!!!!  ", colorSensor.blue());
+                telemetry.addData("Red!!!!  ", colorSensor.blue());
                 turnRight(0.15, 0.05);
                 sleep(1000);
                 sensorServo.setPosition(0);

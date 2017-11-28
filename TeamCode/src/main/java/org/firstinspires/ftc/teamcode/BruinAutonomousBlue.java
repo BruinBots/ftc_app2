@@ -102,6 +102,12 @@ public class BruinAutonomousBlue extends LinearOpMode {
         //}
     }
 
+    public void goForward (double frwrdSpeed, double seconds) {
+        leftWheel.setPower(-frwrdSpeed);
+        rightWheel.setPower(frwrdSpeed);
+        sleep(Math.round(seconds*1000));
+    }
+
 
     @Override
     public void runOpMode() {
@@ -163,6 +169,10 @@ public class BruinAutonomousBlue extends LinearOpMode {
                 sensorServo.setPosition(0);
                 turnLeft(0.15, 0.05);
             }
+            turnLeft (0.05, 0.5);
+            goForward(1,2.25);
+
+
             telemetry.update();
             sleep(1000);
             leftWheel.setPower(0);
@@ -197,6 +207,7 @@ public class BruinAutonomousBlue extends LinearOpMode {
                 relativeLayout.setBackgroundColor(Color.WHITE);
             }
         });
+        sleep(1000);
     }
 }
 

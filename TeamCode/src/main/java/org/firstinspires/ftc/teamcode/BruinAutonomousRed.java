@@ -82,6 +82,7 @@ public class BruinAutonomousRed extends LinearOpMode {
     DcMotor leftWheel;
     Servo sensorServo;
 
+    //Set-up omni wheels 7in away; normal wheels 4 1/2in away
 
 
     //DistanceSensor sensorDistance;
@@ -110,8 +111,8 @@ public class BruinAutonomousRed extends LinearOpMode {
     }
 
     public void goForward (double frwrdSpeed, double seconds) {
-        leftWheel.setPower(-frwrdSpeed);
-        rightWheel.setPower(frwrdSpeed);
+        leftWheel.setPower(frwrdSpeed);
+        rightWheel.setPower(-frwrdSpeed);
         sleep(Math.round(seconds*1000));
     }
 
@@ -151,7 +152,7 @@ public class BruinAutonomousRed extends LinearOpMode {
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
-            sensorServo.setPosition(0.65);
+            sensorServo.setPosition(0.67);
             sleep(3000);
 
             // convert the RGB values to HSV values.
@@ -167,17 +168,27 @@ public class BruinAutonomousRed extends LinearOpMode {
                 turnLeft (0.15, 0.05);
                 sleep(1000);
                 sensorServo.setPosition(0);
+                sleep(1000);
                 turnRight(0.15, 0.05);
+                sleep(1000);
+                leftWheel.setPower(0);
+                rightWheel.setPower(0);
             }
             else {
                 telemetry.addData("Blue!!!!  ", colorSensor.blue());
                 turnRight(0.15, 0.05);
                 sleep(1000);
                 sensorServo.setPosition(0);
+                sleep(1000);
                 turnLeft(0.15, 0.05);
+                sleep(1000);
+                leftWheel.setPower(0);
+                rightWheel.setPower(0);
             }
-            turnRight(0.05, 0.5);
-            goForward(1, 2.25);
+            sleep(2000);
+            turnLeft(0.8, 0.3);
+            sleep(1000);
+            goForward(1, 0.4);
 
             telemetry.update();
             sleep(1000);

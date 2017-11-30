@@ -81,6 +81,8 @@ public class BruinAutonomousRed extends LinearOpMode {
     DcMotor rightWheel;
     DcMotor leftWheel;
     Servo sensorServo;
+    Servo leftServo;
+    Servo rightServo;
 
     //Set-up omni wheels 7in away; normal wheels 4 1/2in away
 
@@ -92,6 +94,8 @@ public class BruinAutonomousRed extends LinearOpMode {
         leftWheel.setPower(-turnSpeed);
         rightWheel.setPower(-turnSpeed);
         sleep(Math.round(seconds*1000));
+        leftWheel.setPower(0);
+        rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -103,6 +107,8 @@ public class BruinAutonomousRed extends LinearOpMode {
         leftWheel.setPower(turnSpeed);
         rightWheel.setPower(turnSpeed);
         sleep(Math.round(seconds*1000));
+        leftWheel.setPower(0);
+        rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -125,8 +131,13 @@ public class BruinAutonomousRed extends LinearOpMode {
         sensorServo = hardwareMap.get(Servo.class, "sensorServo");
         leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
         rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
+        leftServo = hardwareMap.get(Servo.class, "leftServo");
+        rightServo = hardwareMap.get(Servo.class, "rightServo");
 
         sensorServo.setPosition(0);
+
+        leftServo.setPosition(0.4);
+        rightServo.setPosition(0.6);
 
         // get a reference to the distance sensor that shares the same name.
         //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
@@ -165,28 +176,28 @@ public class BruinAutonomousRed extends LinearOpMode {
 
             if (colorSensor.red() > colorSensor.blue()) {
                 telemetry.addData("Red!!!!  ", colorSensor.red());
-                turnLeft (0.15, 0.05);
+                turnLeft (0.15, 0.5);
                 sleep(1000);
                 sensorServo.setPosition(0);
                 sleep(1000);
-                turnRight(0.15, 0.05);
+                turnRight(0.15, 0.5);
                 sleep(1000);
                 leftWheel.setPower(0);
                 rightWheel.setPower(0);
             }
             else {
                 telemetry.addData("Blue!!!!  ", colorSensor.blue());
-                turnRight(0.15, 0.05);
+                turnRight(0.15, 0.5);
                 sleep(1000);
                 sensorServo.setPosition(0);
                 sleep(1000);
-                turnLeft(0.15, 0.05);
+                turnLeft(0.15, 0.5);
                 sleep(1000);
                 leftWheel.setPower(0);
                 rightWheel.setPower(0);
             }
             sleep(2000);
-            turnLeft(0.8, 0.3);
+            turnRight(0.5, 0.6);
             sleep(1000);
             goForward(1, 0.4);
 

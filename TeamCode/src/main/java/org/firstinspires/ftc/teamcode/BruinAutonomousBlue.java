@@ -112,6 +112,9 @@ public class BruinAutonomousBlue extends LinearOpMode {
         leftWheel.setPower(frwrdSpeed);
         rightWheel.setPower(-frwrdSpeed);
         sleep(Math.round(seconds*1000));
+        leftWheel.setPower(0);
+        rightWheel.setPower(0);
+        //This is untested... test it tomorrow @ tournament.
     }
 
 

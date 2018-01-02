@@ -52,14 +52,16 @@ public class Main1 extends LinearOpMode {
         //forkLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize the servos to the mid position
-        leftServo.setPosition(MID_SERVO);
-        rightServo.setPosition(MID_SERVO);
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        leftServo.setPosition(MID_SERVO);
+        rightServo.setPosition(MID_SERVO);
         while (opModeIsActive()) {
+
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.

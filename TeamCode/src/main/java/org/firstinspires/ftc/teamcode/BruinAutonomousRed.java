@@ -137,10 +137,7 @@ public class BruinAutonomousRed extends LinearOpMode {
         leftServo = hardwareMap.get(Servo.class, "leftServo");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
 
-        sensorServo.setPosition(0);
 
-        leftServo.setPosition(0.4);
-        rightServo.setPosition(0.6);
 
         // get a reference to the distance sensor that shares the same name.
         //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
@@ -163,6 +160,10 @@ public class BruinAutonomousRed extends LinearOpMode {
         // wait for the start button to be pressed.
         waitForStart();
 
+        sensorServo.setPosition(0);
+
+        leftServo.setPosition(0.4);
+        rightServo.setPosition(0.6);
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
@@ -202,7 +203,7 @@ public class BruinAutonomousRed extends LinearOpMode {
             sleep(2000);
             turnRight(0.5, 0.6);
             sleep(1000);
-            goForward(1, 0.4);
+            goForward(1, 0.5);
 
             telemetry.update();
             sleep(1000);

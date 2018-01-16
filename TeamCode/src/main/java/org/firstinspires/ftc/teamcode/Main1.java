@@ -14,12 +14,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Main1 extends LinearOpMode {
     private Servo leftServo;
+    private Servo leftServo2;
     private Servo rightServo;
+    private Servo rightServo2;
     private DcMotor forkLift;
     private DcMotor leftWheel;
     private DcMotor rightWheel;
-    private Servo leftServo2;
-    private Servo rightServo2;
+
     double left;
     double right;
     double drive;
@@ -38,7 +39,9 @@ public class Main1 extends LinearOpMode {
     @Override
     public void runOpMode() {
         rightServo = hardwareMap.get(Servo.class, "rightServo");
+        rightServo2 = hardwareMap.get(Servo.class, "rightServo2");
         leftServo = hardwareMap.get(Servo.class, "leftServo");
+        leftServo2 = hardwareMap.get(Servo.class, "leftServo2");
         leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
         rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
         forkLift = hardwareMap.get(DcMotor.class, "forkLift");
@@ -165,7 +168,9 @@ public class Main1 extends LinearOpMode {
 // ************* refresh data *********************** //
 
             telemetry.addData("Servo Position", rightServo.getPosition());
+            telemetry.addData("Servo Position", rightServo2.getPosition());
             telemetry.addData("Servo Position", leftServo.getPosition());
+            telemetry.addData("Servo Position", leftServo2.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
 

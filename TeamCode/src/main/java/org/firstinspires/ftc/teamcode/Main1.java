@@ -18,6 +18,8 @@ public class Main1 extends LinearOpMode {
     private DcMotor forkLift;
     private DcMotor leftWheel;
     private DcMotor rightWheel;
+    private Servo leftServo2;
+    private Servo rightServo2;
     double left;
     double right;
     double drive;
@@ -59,7 +61,9 @@ public class Main1 extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         leftServo.setPosition(MID_SERVO);
+        leftServo2.setPosition(MID_SERVO);
         rightServo.setPosition(MID_SERVO);
+        rightServo2.setPosition(MID_SERVO);
         while (opModeIsActive()) {
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
@@ -146,12 +150,16 @@ public class Main1 extends LinearOpMode {
             //closes servo
             if (gamepad1.left_bumper) {
                 leftServo.setPosition(0.6);
+                leftServo2.setPosition(0.6);
                 rightServo.setPosition(0.4);
+                rightServo2.setPosition(0.4);
             }
             //opens servo
             else if (gamepad1.right_bumper) {
                 leftServo.setPosition(0.4);
+                leftServo2.setPosition(0.4);
                 rightServo.setPosition(0.6);
+                rightServo2.setPosition(0.6);
             }
 
 // ************* refresh data *********************** //

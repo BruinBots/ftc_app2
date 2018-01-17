@@ -79,7 +79,9 @@ public class AutoGyroRed extends LinearOpMode {
     DcMotor leftWheel;
     Servo sensorServo;
     Servo leftServo;
+    Servo leftServo2;
     Servo rightServo;
+    Servo rightServo2;
     ModernRoboticsI2cGyro sensorGyro;
 
     /* Declare OpMode members. */
@@ -153,6 +155,7 @@ public class AutoGyroRed extends LinearOpMode {
         leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
         rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
         leftServo = hardwareMap.get(Servo.class, "leftServo");
+        leftServo2 = hardwareMap.get(Servo.class, "leftServo2");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
 
 

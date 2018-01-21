@@ -104,16 +104,59 @@ public class AutoGyroRed extends LinearOpMode {
     static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
 
-    //Set-up omni wheels 7in away; normal wheels 4 1/2in away
+    public void goForward (double frwrdSpeed, double rotations) {
+        leftWheel.setPower(frwrdSpeed);
+        rightWheel.setPower(-frwrdSpeed);
+        
+        leftWheel.setPower(0);
+        rightWheel.setPower(0);
+        //This is untested... test it tomorrow @ tournament.
+    }
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - gyro.getIntegratedZValue();
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
+    }
 
 
     //DistanceSensor sensorDistance;
     private ElapsedTime runtime = new ElapsedTime();
 
-    public void turnLeft (double turnSpeed, double seconds) {
+    public void gyroTurn (  double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.update();
+        }
+    }
+
+    /**
+     *  Method to obtain & hold a heading for a finite amount of time
+     *  Move will stop once the requested time has elapsed
+     *
+     *  speed     Desired speed of turn.
+     *  angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     *  holdTime   Length of time (in seconds) to hold the specified heading.
+     */
+
+    /*public void turnLeft (double turnSpeed, double angle) {
+
         leftWheel.setPower(-turnSpeed);
         rightWheel.setPower(-turnSpeed);
-        sleep(Math.round(seconds*1000));
+
         leftWheel.setPower(0);
         rightWheel.setPower(0);
         //runtime.reset();
@@ -135,14 +178,40 @@ public class AutoGyroRed extends LinearOpMode {
             //telemetry.update();
         //}
     }
+*/
 
-    public void goForward (double frwrdSpeed, double seconds) {
-        leftWheel.setPower(frwrdSpeed);
-        rightWheel.setPower(-frwrdSpeed);
-        sleep(Math.round(seconds*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
-        //This is untested... test it tomorrow @ tournament.
+    boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        robot.leftDrive.setPower(leftSpeed);
+        robot.rightDrive.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
     }
 
 
@@ -157,8 +226,28 @@ public class AutoGyroRed extends LinearOpMode {
         leftServo = hardwareMap.get(Servo.class, "leftServo");
         leftServo2 = hardwareMap.get(Servo.class, "leftServo2");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
+        rightServo2 = hardwareMap.get(Servo.class, "rightServo2");
+        sensorGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "sensorGyro");
 
+        telemetry.addData(">", "Robot Set.");
+        telemetry.update();
 
+        sensorGyro.calibrate();
+
+        while (!isStopRequested() && sensorGyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.");
+        telemetry.update();
+
+        while (!isStarted()) {
+            telemetry.addData(">", "Robot Heading = %d", sensorGyro.getIntegratedZValue());
+            telemetry.update();
+        }
+
+        sensorGyro.resetZAxisIntegrator();
 
         // get a reference to the distance sensor that shares the same name.
         //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
@@ -201,28 +290,28 @@ public class AutoGyroRed extends LinearOpMode {
 
             if (colorSensor.red() > colorSensor.blue()) {
                 telemetry.addData("Red!!!!  ", colorSensor.red());
-                turnLeft (0.15, 0.5);
+                gyroTurn (0.15, -10);
                 sleep(1000);
                 sensorServo.setPosition(0);
                 sleep(1000);
-                turnRight(0.15, 0.5);
+                gyroTurn(0.15, 10);
                 sleep(1000);
                 leftWheel.setPower(0);
                 rightWheel.setPower(0);
             }
             else {
                 telemetry.addData("Blue!!!!  ", colorSensor.blue());
-                turnRight(0.15, 0.5);
+                gyroTurn(0.15, 10);
                 sleep(1000);
                 sensorServo.setPosition(0);
                 sleep(1000);
-                turnLeft(0.15, 0.5);
+                gyroTurn(0.15, -10);
                 sleep(1000);
                 leftWheel.setPower(0);
                 rightWheel.setPower(0);
             }
             sleep(2000);
-            turnRight(0.5, 0.6);
+            gyroTurn(0.5, 90);
             sleep(1000);
             goForward(1, 0.5);
 

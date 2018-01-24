@@ -105,12 +105,19 @@ public class AutoGyroRed extends LinearOpMode {
 
 
     public void goForward (double frwrdSpeed, double rotations) {
+        int newLeftTarget;
+        int newRightTarget;
+        int moveCounts;
+
+        if (opModeIsActive())
+            moveCounts = (int)(rotations * COUNTS_PER_INCH);
+        newLeftTarget = leftWheel.getCurrentPosition() + moveCounts;
+        newRightTarget = rightWheel.getCurrentPosition() + moveCounts;
         leftWheel.setPower(frwrdSpeed);
         rightWheel.setPower(-frwrdSpeed);
-        
+        sleep(Math.round(rotations*1000));
         leftWheel.setPower(0);
         rightWheel.setPower(0);
-        //This is untested... test it tomorrow @ tournament.
     }
 
     public double getError(double targetAngle) {

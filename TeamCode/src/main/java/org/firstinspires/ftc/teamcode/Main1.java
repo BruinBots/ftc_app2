@@ -21,6 +21,8 @@ public class Main1 extends LinearOpMode {
     private DcMotor leftWheel;
     private DcMotor rightWheel;
 
+    static final double MID_SERVO= 0.5;
+
     double left;
     double right;
     double drive;
@@ -29,7 +31,7 @@ public class Main1 extends LinearOpMode {
     double liftUp;
     double liftDown;
     public int orderedPosition = 0;
-    public static final double MID_SERVO = 0.5;
+
     // Steps for actions:
     // 1. Reads sensor
     // 2. Changes variable using sensor
@@ -38,23 +40,7 @@ public class Main1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        rightServo = hardwareMap.get(Servo.class, "rightServo");
-        rightServo2 = hardwareMap.get(Servo.class, "rightServo2");
-        leftServo = hardwareMap.get(Servo.class, "leftServo");
-        leftServo2 = hardwareMap.get(Servo.class, "leftServo2");
-        leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
-        rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
-        forkLift = hardwareMap.get(DcMotor.class, "forkLift");
-        //This section resets the forkLift... The forkLift MUST start in lowest position!
-        /*forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Resets encoders
-        while (forkLift.getCurrentPosition() != 0) { //Ensures encoders are zero
-            forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            telemetry.update(); //Needed within all loops
-        }
-        forkLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); //Sets mode to use encoders setMode() is used instead of setChannelMode(), which is now deprecated
-        forkLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-*/
-        //forkLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BruinHardware  robot= new BruinHardware();
         forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize the servos to the mid position
 

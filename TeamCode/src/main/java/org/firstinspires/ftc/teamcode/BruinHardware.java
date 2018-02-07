@@ -32,8 +32,8 @@ public class BruinHardware {
 
     }
 
-    public void init(HardwareMap hwMap) {
-        hwMap = hwMap;
+    public void init(HardwareMap ahwMap) {
+        hwMap = ahwMap;
 
         leftWheel = hwMap.get(DcMotor.class, "leftWheel");
         rightWheel = hwMap.get(DcMotor.class, "rightWheel");

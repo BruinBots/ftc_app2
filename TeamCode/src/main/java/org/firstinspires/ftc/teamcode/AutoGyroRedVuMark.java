@@ -95,14 +95,6 @@ public class AutoGyroRedVuMark extends LinearOpMode {
      * to the target object.  Note that the distance sensor saturates at around 2" (5 cm).
      *
      */
-    ColorSensor colorSensor;
-    DcMotor rightWheel;
-    DcMotor leftWheel;
-    Servo sensorServo;
-    Servo leftServo;
-    Servo leftServo2;
-    Servo rightServo;
-    Servo rightServo2;
     ModernRoboticsI2cGyro sensorGyro;
 
 
@@ -134,11 +126,11 @@ public class AutoGyroRedVuMark extends LinearOpMode {
         int moveCounts;
 
         if (opModeIsActive())
-        leftWheel.setPower(frwrdSpeed);
-        rightWheel.setPower(-frwrdSpeed);
+        robot.leftWheel.setPower(frwrdSpeed);
+        robot.rightWheel.setPower(-frwrdSpeed);
         sleep(Math.round(rotations*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
     }
 
     public double getError(double targetAngle) {
@@ -179,19 +171,19 @@ public class AutoGyroRedVuMark extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftWheel.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightWheel.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            leftWheel.setTargetPosition(newLeftTarget);
-            rightWheel.setTargetPosition(newRightTarget);
+            newLeftTarget = robot.leftWheel.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = robot.rightWheel.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            robot.leftWheel.setTargetPosition(newLeftTarget);
+            robot.rightWheel.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            leftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.leftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftWheel.setPower(Math.abs(speed));
-            rightWheel.setPower(Math.abs(speed));
+            robot.leftWheel.setPower(Math.abs(speed));
+            robot.rightWheel.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -201,23 +193,23 @@ public class AutoGyroRedVuMark extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (leftWheel.isBusy() && rightWheel.isBusy())) {
+                    (robot.leftWheel.isBusy() && robot.rightWheel.isBusy())) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
-                        leftWheel.getCurrentPosition(),
-                        rightWheel.getCurrentPosition());
+                        robot.leftWheel.getCurrentPosition(),
+                        robot.rightWheel.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            leftWheel.setPower(0);
-            rightWheel.setPower(0);
+            robot.leftWheel.setPower(0);
+            robot.rightWheel.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            leftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.leftWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
@@ -286,8 +278,8 @@ public class AutoGyroRedVuMark extends LinearOpMode {
         }
 
         // Send desired speeds to motors.
-        leftWheel.setPower(leftSpeed);
-        rightWheel.setPower(rightSpeed);
+        robot.leftWheel.setPower(leftSpeed);
+        robot.rightWheel.setPower(rightSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);
@@ -302,14 +294,6 @@ public class AutoGyroRedVuMark extends LinearOpMode {
     public void runOpMode() {
 
         // get a reference to the color sensor.
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
-        sensorServo = hardwareMap.get(Servo.class, "sensorServo");
-        leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
-        rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
-        leftServo = hardwareMap.get(Servo.class, "leftServo");
-        leftServo2 = hardwareMap.get(Servo.class, "leftServo2");
-        rightServo = hardwareMap.get(Servo.class, "rightServo");
-        rightServo2 = hardwareMap.get(Servo.class, "rightServo2");
         sensorGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "sensorGyro");
 
         telemetry.addData(">", "Robot Set.");
@@ -373,10 +357,10 @@ public class AutoGyroRedVuMark extends LinearOpMode {
         waitForStart();
 
 
-        sensorServo.setPosition(0);
+        robot.sensorServo.setPosition(0);
 
-        leftServo.setPosition(0.4);
-        rightServo.setPosition(0.6);
+        robot.leftServo.setPosition(0.4);
+        robot.rightServo.setPosition(0.6);
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
@@ -426,38 +410,38 @@ public class AutoGyroRedVuMark extends LinearOpMode {
 
             telemetry.update();
         }
-            sensorServo.setPosition(0.67);
+            robot.sensorServo.setPosition(0.67);
             sleep(3000);
 
             // convert the RGB values to HSV values.
             // multiply by the SCALE_FACTOR.
             // then cast it back to int (SCALE_FACTOR is a double)
-            Color.RGBToHSV((int) (colorSensor.red() * SCALE_FACTOR),
-                    (int) (colorSensor.green() * SCALE_FACTOR),
-                    (int) (colorSensor.blue() * SCALE_FACTOR),
+            Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.green() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.blue() * SCALE_FACTOR),
                     hsvValues);
 
-            if (colorSensor.red() > colorSensor.blue()) {
-                telemetry.addData("Red!!!!  ", colorSensor.red());
+            if (robot.colorSensor.red() > robot.colorSensor.blue()) {
+                telemetry.addData("Red!!!!  ", robot.colorSensor.red());
                 gyroTurn (0.15, -10);
                 sleep(1000);
-                sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0);
                 sleep(1000);
                 gyroTurn(0.15, 10);
                 sleep(1000);
-                leftWheel.setPower(0);
-                rightWheel.setPower(0);
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
             }
             else {
-                telemetry.addData("Blue!!!!  ", colorSensor.blue());
+                telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
                 gyroTurn(0.15, 10);
                 sleep(1000);
-                sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0);
                 sleep(1000);
                 gyroTurn(0.15, -10);
                 sleep(1000);
-                leftWheel.setPower(0);
-                rightWheel.setPower(0);
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
             }
             sleep(2000);
             gyroTurn(0.5, 90);
@@ -466,18 +450,18 @@ public class AutoGyroRedVuMark extends LinearOpMode {
 
             telemetry.update();
             sleep(1000);
-            leftWheel.setPower(0);
-            rightWheel.setPower(0);
+            robot.leftWheel.setPower(0);
+            robot.rightWheel.setPower(0);
 
 
 
             // send the info back to driver station using telemetry function.
             //telemetry.addData("Distance (cm)",
                   //  String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Alpha", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
+            telemetry.addData("Alpha", robot.colorSensor.alpha());
+            telemetry.addData("Red  ", robot.colorSensor.red());
+            telemetry.addData("Green", robot.colorSensor.green());
+            telemetry.addData("Blue ", robot.colorSensor.blue());
             telemetry.addData("Hue", hsvValues[0]);
 
             // change the background color to match the color detected by the RGB sensor.
@@ -492,11 +476,6 @@ public class AutoGyroRedVuMark extends LinearOpMode {
             telemetry.update();
         //}
 
-        String format(OpenGLMatrix transformationMatrix) {
-
-            return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
-
-        }
 
         // Set the panel back to the default color
         relativeLayout.post(new Runnable() {
@@ -505,6 +484,11 @@ public class AutoGyroRedVuMark extends LinearOpMode {
             }
         });
         sleep(1000);
+
+    }
+    String format(OpenGLMatrix transformationMatrix) {
+
+        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
 
     }
 }

@@ -13,13 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="Main1", group = "Rohan")
 
 public class Main1 extends LinearOpMode {
-    private Servo leftServo;
-    private Servo leftServo2;
-    private Servo rightServo;
-    private Servo rightServo2;
-    private DcMotor forkLift;
-    private DcMotor leftWheel;
-    private DcMotor rightWheel;
 
     static final double MID_SERVO= 0.5;
 
@@ -41,7 +34,7 @@ public class Main1 extends LinearOpMode {
     @Override
     public void runOpMode() {
         BruinHardware  robot= new BruinHardware();
-        forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize the servos to the mid position
 
 
@@ -49,10 +42,10 @@ public class Main1 extends LinearOpMode {
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        leftServo.setPosition(MID_SERVO);
-        leftServo2.setPosition(MID_SERVO);
-        rightServo.setPosition(MID_SERVO);
-        rightServo2.setPosition(MID_SERVO);
+        robot.leftServo.setPosition(MID_SERVO);
+        robot.leftServo2.setPosition(MID_SERVO);
+        robot.rightServo.setPosition(MID_SERVO);
+        robot.rightServo2.setPosition(MID_SERVO);
         while (opModeIsActive()) {
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
@@ -75,23 +68,23 @@ public class Main1 extends LinearOpMode {
 
             // Nitro boost to wheels: full speed
             if (gamepad1.a) {
-                leftWheel.setPower(1.0);
-                rightWheel.setPower(-1.0);
+                robot.leftWheel.setPower(1.0);
+                robot.rightWheel.setPower(-1.0);
             } else if (gamepad1.b) {
-                leftWheel.setPower(-1.0);
-                rightWheel.setPower(1.0);
+                robot.leftWheel.setPower(-1.0);
+                robot.rightWheel.setPower(1.0);
             } else if (gamepad1.y) {
-                leftWheel.setPower(1.0);
-                rightWheel.setPower(1.0);
+                robot.leftWheel.setPower(1.0);
+                robot.rightWheel.setPower(1.0);
             } else if (gamepad1.x) {
-                leftWheel.setPower(-1.0);
-                rightWheel.setPower(-1.0);
+                robot.leftWheel.setPower(-1.0);
+                robot.rightWheel.setPower(-1.0);
             }
 
             // Output the safe values to the motor drives.
             else {
-                leftWheel.setPower(left);
-                rightWheel.setPower(right);
+                robot.leftWheel.setPower(left);
+                robot.rightWheel.setPower(right);
             }
 
 // ************* drive forkLift using trigger *********************** //
@@ -105,8 +98,8 @@ public class Main1 extends LinearOpMode {
                 liftDown /= max;
             }
 
-          forkLift.setPower(liftUp);
-          forkLift.setPower(liftDown);
+          robot.forkLift.setPower(liftUp);
+          robot.forkLift.setPower(liftDown);
 
 
          /*   if ((liftUp != 0) || (liftDown != 0)) { // Arm is being commanded
@@ -138,25 +131,25 @@ public class Main1 extends LinearOpMode {
 
             //closes servo
             if (gamepad1.left_bumper) {
-                leftServo.setPosition(0.6);
-                leftServo2.setPosition(0.6);
-                rightServo.setPosition(0.4);
-                rightServo2.setPosition(0.4);
+                robot.leftServo.setPosition(0.6);
+                robot.leftServo2.setPosition(0.6);
+                robot.rightServo.setPosition(0.4);
+                robot.rightServo2.setPosition(0.4);
             }
             //opens servo
             else if (gamepad1.right_bumper) {
-                leftServo.setPosition(0.4);
-                leftServo2.setPosition(0.4);
-                rightServo.setPosition(0.6);
-                rightServo2.setPosition(0.6);
+                robot.leftServo.setPosition(0.4);
+                robot.leftServo2.setPosition(0.4);
+                robot.rightServo.setPosition(0.6);
+                robot.rightServo2.setPosition(0.6);
             }
 
 // ************* refresh data *********************** //
 
-            telemetry.addData("Servo Position", rightServo.getPosition());
-            telemetry.addData("Servo Position", rightServo2.getPosition());
-            telemetry.addData("Servo Position", leftServo.getPosition());
-            telemetry.addData("Servo Position", leftServo2.getPosition());
+            telemetry.addData("Servo Position", robot.rightServo.getPosition());
+            telemetry.addData("Servo Position", robot.rightServo2.getPosition());
+            telemetry.addData("Servo Position", robot.leftServo.getPosition());
+            telemetry.addData("Servo Position", robot.leftServo2.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
 

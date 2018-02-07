@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.text.ParcelableSpan;
-import android.view.View;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+
 
 
 /**
@@ -34,14 +27,13 @@ public class BruinHardware {
 
 
     HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
 
     public BruinHardware() {
 
     }
 
-    public void init(HardwareMap ahwMap) {
-        hwMap = ahwMap;
+    public void init(HardwareMap hwMap) {
+        hwMap = hwMap;
 
         leftWheel = hwMap.get(DcMotor.class, "leftWheel");
         rightWheel = hwMap.get(DcMotor.class, "rightWheel");
@@ -68,6 +60,7 @@ public class BruinHardware {
         leftServo2.setPosition(MID_SERVO);
         rightServo.setPosition(MID_SERVO);
         rightServo2.setPosition(MID_SERVO);
+        sensorServo.setPosition(0);
 
     }
 }

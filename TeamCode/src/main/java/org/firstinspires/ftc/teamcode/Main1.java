@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by rohan on 11/5/2017.
  */
 
-/*@TeleOp(name="Main1", group = "Rohan")
+@TeleOp(name="Main1", group = "Rohan")
 
 public class Main1 extends LinearOpMode {
 
@@ -31,10 +31,11 @@ public class Main1 extends LinearOpMode {
     // 3. Fixes Range
     // 4. Moves the robot
 
-    /*@Override
+    @Override
     public void runOpMode() {
         BruinHardware  robot= new BruinHardware();
-        robot.forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //Need to put this in somewhere 2/11 Vince
+        //robot.forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Initialize the servos to the mid position
 
 
@@ -130,7 +131,7 @@ public class Main1 extends LinearOpMode {
 // ************* open/close servoclaw with bumpers *********************** //
 
             //closes servo
-           /* if (gamepad1.left_bumper) {
+            if (gamepad1.left_bumper) {
                 robot.leftServo.setPosition(0.6);
                 robot.leftServo2.setPosition(0.6);
                 robot.rightServo.setPosition(0.4);
@@ -158,4 +159,4 @@ public class Main1 extends LinearOpMode {
 
 
     }
-}*/
+}

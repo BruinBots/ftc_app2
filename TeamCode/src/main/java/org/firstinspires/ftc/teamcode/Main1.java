@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.BruinHardware;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,7 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Main1 extends LinearOpMode {
 
-    static final double MID_SERVO= 0.5;
+    static double MID_SERVO= 0.5;
 
     double left;
     double right;
@@ -33,12 +34,13 @@ public class Main1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        BruinHardware  robot= new BruinHardware();
-        //Need to put this in somewhere 2/11 Vince
-        //robot.forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BruinHardware robot= new BruinHardware();
+
+
         // Initialize the servos to the mid position
 
-
+        robot.init(hardwareMap);
+        robot.forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         // Wait for the game to start (driver presses PLAY)
@@ -47,14 +49,15 @@ public class Main1 extends LinearOpMode {
         robot.leftServo2.setPosition(MID_SERVO);
         robot.rightServo.setPosition(MID_SERVO);
         robot.rightServo2.setPosition(MID_SERVO);
+        robot.sensorServo.setPosition(0.9);
         while (opModeIsActive()) {
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
 // ************* drive robot using gamepad *********************** //
-            drive = gamepad1.right_stick_x;
-            turn = 0.7*-gamepad1.left_stick_y;
+            drive = gamepad1.left_stick_x;
+            turn = 0.7*-gamepad1.right_stick_y;
 
             // Combine drive and turn for blended motion.
             left = drive + turn;
@@ -69,17 +72,17 @@ public class Main1 extends LinearOpMode {
 
             // Nitro boost to wheels: full speed
             if (gamepad1.a) {
-                robot.leftWheel.setPower(1.0);
+                robot.leftWheel.setPower(-1.0);
                 robot.rightWheel.setPower(-1.0);
             } else if (gamepad1.b) {
-                robot.leftWheel.setPower(-1.0);
+                robot.leftWheel.setPower(1.0);
                 robot.rightWheel.setPower(1.0);
             } else if (gamepad1.y) {
                 robot.leftWheel.setPower(1.0);
-                robot.rightWheel.setPower(1.0);
+                robot.rightWheel.setPower(-1.0);
             } else if (gamepad1.x) {
                 robot.leftWheel.setPower(-1.0);
-                robot.rightWheel.setPower(-1.0);
+                robot.rightWheel.setPower(1.0);
             }
 
             // Output the safe values to the motor drives.
@@ -135,14 +138,14 @@ public class Main1 extends LinearOpMode {
                 robot.leftServo.setPosition(0.6);
                 robot.leftServo2.setPosition(0.6);
                 robot.rightServo.setPosition(0.4);
-                robot.rightServo2.setPosition(0.4);
+                robot.rightServo2.setPosition(0.4);//Was 0.4???
             }
             //opens servo
             else if (gamepad1.right_bumper) {
                 robot.leftServo.setPosition(0.4);
                 robot.leftServo2.setPosition(0.4);
                 robot.rightServo.setPosition(0.6);
-                robot.rightServo2.setPosition(0.6);
+                robot.rightServo2.setPosition(0.6);//was 0.6???
             }
 
 // ************* refresh data *********************** //

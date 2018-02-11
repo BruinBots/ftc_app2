@@ -23,7 +23,7 @@ public class BruinHardware {
     public Servo sensorServo = null;
     public ColorSensor colorSensor = null;
 
-    public static final double MID_SERVO = 0.5;
+    static double MID_SERVO = 0.5;
 
 
     HardwareMap hwMap = null;
@@ -56,11 +56,11 @@ public class BruinHardware {
         rightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         forkLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftServo.setPosition(MID_SERVO);
-        leftServo2.setPosition(MID_SERVO);
-        rightServo.setPosition(MID_SERVO);
-        rightServo2.setPosition(MID_SERVO);
-        sensorServo.setPosition(0);
+        //leftServo.setPosition(MID_SERVO);
+        //leftServo2.setPosition(MID_SERVO);
+        //rightServo.setPosition(MID_SERVO);
+        //rightServo2.setPosition(MID_SERVO);
+        //sensorServo.setPosition(100);
 
     }
 }

@@ -56,8 +56,8 @@ public class Main1 extends LinearOpMode {
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
 // ************* drive robot using gamepad *********************** //
-            drive = gamepad1.left_stick_x;
-            turn = 0.7*-gamepad1.right_stick_y;
+            drive = -gamepad1.left_stick_y;
+            turn = -0.7*-gamepad1.right_stick_x;
 
             // Combine drive and turn for blended motion.
             left = drive + turn;

@@ -35,14 +35,16 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.BruinHardware;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /*
  * This is an example LinearOpMode that shows how to use
@@ -75,11 +77,13 @@ public class AutoGyroRed extends LinearOpMode {
      *
      */
 
-    ModernRoboticsI2cGyro sensorGyro;
+    BruinHardware    robot = new BruinHardware();
 
 
     /* Declare OpMode members. */
-    BruinHardware    robot = new BruinHardware();
+
+
+
     ModernRoboticsI2cGyro gyro=null;
 
     private ElapsedTime period  = new ElapsedTime();
@@ -99,8 +103,143 @@ public class AutoGyroRed extends LinearOpMode {
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
+    //GyroSensor sensorGyro;
 
-    public void goForward (double frwrdSpeed, double rotations) {
+    @Override
+    public void runOpMode() {
+
+        robot.init(hardwareMap);
+
+        // get a reference to the color sensor.
+        gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "sensorGyro");
+
+        telemetry.addData(">", "Robot Set.");
+        telemetry.update();
+
+        gyro.calibrate();
+
+        while (!isStopRequested() && gyro.isCalibrating())  {
+            sleep(50);
+            idle();
+        }
+
+        telemetry.addData(">", "Gyro Calibrated.");
+        telemetry.update();
+
+        while (!isStarted()) {
+            telemetry.addData(">", "Robot Heading = %d", gyro.getIntegratedZValue());
+            telemetry.update();
+        }
+
+        gyro.resetZAxisIntegrator();
+
+        // get a reference to the distance sensor that shares the same name.
+        //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
+
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F, 0F, 0F};
+
+        // values is a reference to the hsvValues array.
+        final float values[] = hsvValues;
+
+        // sometimes it helps to multiply the raw RGB values with a scale factor
+        // to amplify/attentuate the measured values.
+        final double SCALE_FACTOR = 255;
+
+        // get a reference to the RelativeLayout so we can change the background
+        // color of the Robot Controller app to match the hue detected by the RGB sensor.
+        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
+
+        // wait for the start button to be pressed.
+        waitForStart();
+
+        robot.sensorServo.setPosition(0.9);
+
+        robot.leftServo.setPosition(0.4);
+        robot.leftServo2.setPosition(0.4);
+        robot.rightServo.setPosition(0.6);
+        robot.rightServo2.setPosition(0.6);
+        // loop and read the RGB and distance data.
+        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
+        //while (opModeIsActive()) {
+        robot.sensorServo.setPosition(0.2);
+        sleep(3000);
+
+        // convert the RGB values to HSV values.
+        // multiply by the SCALE_FACTOR.
+        // then cast it back to int (SCALE_FACTOR is a double)
+        Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
+                (int) (robot.colorSensor.green() * SCALE_FACTOR),
+                (int) (robot.colorSensor.blue() * SCALE_FACTOR),
+                hsvValues);
+
+        if (robot.colorSensor.red() > robot.colorSensor.blue()) {
+            telemetry.addData("Red!!!!  ", robot.colorSensor.red());
+            telemetry.update();
+            //gyroTurn (0.15, -10);
+            turnLeft (0.5, 0.5);
+            sleep(1000);
+            robot.sensorServo.setPosition(0.9);
+            sleep(1000);
+            //gyroTurn(0.15, 10);
+            turnRight(0.5, 0.5);
+        }
+        else {
+            telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
+            telemetry.update();
+            //gyroTurn(0.15, 10);
+            turnRight(0.5, 0.5);
+            sleep(1000);
+            robot.sensorServo.setPosition(0.9);
+            sleep(1000);
+            //gyroTurn(0.15, -10);
+            turnLeft(0.5, 0.5);
+        }
+        sleep(2000);
+        //gyroTurn(0.5, 90);
+        turnRight(0.5, 0.6);
+        sleep(1000);
+        goForward(1, 0.5);
+
+        telemetry.update();
+        sleep(1000);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
+
+
+
+        // send the info back to driver station using telemetry function.
+        //telemetry.addData("Distance (cm)",
+        //  String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
+        telemetry.addData("Alpha", robot.colorSensor.alpha());
+        telemetry.addData("Red  ", robot.colorSensor.red());
+        telemetry.addData("Green", robot.colorSensor.green());
+        telemetry.addData("Blue ", robot.colorSensor.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+
+        // change the background color to match the color detected by the RGB sensor.
+        // pass a reference to the hue, saturation, and value array as an argument
+        // to the HSVToColor method.
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+            }
+        });
+
+        telemetry.update();
+        //}
+
+        // Set the panel back to the default color
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.WHITE);
+            }
+        });
+        sleep(1000);
+    }
+
+    /*public void goForward (double frwrdSpeed, double rotations) {
         int newLeftTarget;
         int newRightTarget;
         int moveCounts;
@@ -111,8 +250,15 @@ public class AutoGyroRed extends LinearOpMode {
         sleep(Math.round(rotations*1000));
         robot.leftWheel.setPower(0);
         robot.rightWheel.setPower(0);
+    }*/
+    public void goForward (double frwrdSpeed, double seconds) {
+        robot.leftWheel.setPower(frwrdSpeed);
+        robot.rightWheel.setPower(frwrdSpeed);
+        sleep(Math.round(seconds*1000));
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
+        //This is untested... test it tomorrow @ tournament.
     }
-
     public double getError(double targetAngle) {
 
         double robotError;
@@ -207,13 +353,13 @@ public class AutoGyroRed extends LinearOpMode {
      *  holdTime   Length of time (in seconds) to hold the specified heading.
      */
 
-    /*public void turnLeft (double turnSpeed, double angle) {
+    public void turnLeft (double turnSpeed, double seconds) {
 
-        leftWheel.setPower(-turnSpeed);
-        rightWheel.setPower(-turnSpeed);
+        robot.leftWheel.setPower(-turnSpeed);
+        robot.rightWheel.setPower(turnSpeed);
 
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -222,18 +368,18 @@ public class AutoGyroRed extends LinearOpMode {
     }
 
     public void turnRight (double turnSpeed, double seconds) {
-        leftWheel.setPower(turnSpeed);
-        rightWheel.setPower(turnSpeed);
+        robot.leftWheel.setPower(turnSpeed);
+        robot.rightWheel.setPower(-turnSpeed);
         sleep(Math.round(seconds*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
             //telemetry.update();
         //}
     }
-*/
+
 
     boolean onHeading(double speed, double angle, double PCoeff) {
         double   error ;
@@ -270,133 +416,6 @@ public class AutoGyroRed extends LinearOpMode {
     }
 
 
-    @Override
-    public void runOpMode() {
 
-        // get a reference to the color sensor.
-        sensorGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "sensorGyro");
-
-        telemetry.addData(">", "Robot Set.");
-        telemetry.update();
-
-        sensorGyro.calibrate();
-
-        while (!isStopRequested() && sensorGyro.isCalibrating())  {
-            sleep(50);
-            idle();
-        }
-
-        telemetry.addData(">", "Gyro Calibrated.");
-        telemetry.update();
-
-        while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", sensorGyro.getIntegratedZValue());
-            telemetry.update();
-        }
-
-        sensorGyro.resetZAxisIntegrator();
-
-        // get a reference to the distance sensor that shares the same name.
-        //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
-
-        // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F, 0F, 0F};
-
-        // values is a reference to the hsvValues array.
-        final float values[] = hsvValues;
-
-        // sometimes it helps to multiply the raw RGB values with a scale factor
-        // to amplify/attentuate the measured values.
-        final double SCALE_FACTOR = 255;
-
-        // get a reference to the RelativeLayout so we can change the background
-        // color of the Robot Controller app to match the hue detected by the RGB sensor.
-        int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
-        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-
-        // wait for the start button to be pressed.
-        waitForStart();
-
-        robot.sensorServo.setPosition(0);
-
-        robot.leftServo.setPosition(0.4);
-        robot.rightServo.setPosition(0.6);
-        // loop and read the RGB and distance data.
-        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
-        //while (opModeIsActive()) {
-            robot.sensorServo.setPosition(0.67);
-            sleep(3000);
-
-            // convert the RGB values to HSV values.
-            // multiply by the SCALE_FACTOR.
-            // then cast it back to int (SCALE_FACTOR is a double)
-            Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
-                    (int) (robot.colorSensor.green() * SCALE_FACTOR),
-                    (int) (robot.colorSensor.blue() * SCALE_FACTOR),
-                    hsvValues);
-
-            if (robot.colorSensor.red() > robot.colorSensor.blue()) {
-                telemetry.addData("Red!!!!  ", robot.colorSensor.red());
-                gyroTurn (0.15, -10);
-                sleep(1000);
-                robot.sensorServo.setPosition(0);
-                sleep(1000);
-                gyroTurn(0.15, 10);
-                sleep(1000);
-                robot.leftWheel.setPower(0);
-                robot.rightWheel.setPower(0);
-            }
-            else {
-                telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
-                gyroTurn(0.15, 10);
-                sleep(1000);
-                robot.sensorServo.setPosition(0);
-                sleep(1000);
-                gyroTurn(0.15, -10);
-                sleep(1000);
-                robot.leftWheel.setPower(0);
-                robot.rightWheel.setPower(0);
-            }
-            sleep(2000);
-            gyroTurn(0.5, 90);
-            sleep(1000);
-            goForward(1, 0.5);
-
-            telemetry.update();
-            sleep(1000);
-            robot.leftWheel.setPower(0);
-            robot.rightWheel.setPower(0);
-
-
-
-            // send the info back to driver station using telemetry function.
-            //telemetry.addData("Distance (cm)",
-                  //  String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Alpha", robot.colorSensor.alpha());
-            telemetry.addData("Red  ", robot.colorSensor.red());
-            telemetry.addData("Green", robot.colorSensor.green());
-            telemetry.addData("Blue ", robot.colorSensor.blue());
-            telemetry.addData("Hue", hsvValues[0]);
-
-            // change the background color to match the color detected by the RGB sensor.
-            // pass a reference to the hue, saturation, and value array as an argument
-            // to the HSVToColor method.
-            relativeLayout.post(new Runnable() {
-                public void run() {
-                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
-                }
-            });
-
-            telemetry.update();
-        //}
-
-        // Set the panel back to the default color
-        relativeLayout.post(new Runnable() {
-            public void run() {
-                relativeLayout.setBackgroundColor(Color.WHITE);
-            }
-        });
-        sleep(1000);
-    }
 }
 

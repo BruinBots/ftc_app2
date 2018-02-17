@@ -33,12 +33,14 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.BruinHardware;
 
 /*
  * This is an example LinearOpMode that shows how to use
@@ -70,12 +72,20 @@ public class BruinAutonomousBlue extends LinearOpMode {
      * to the target object.  Note that the distance sensor saturates at around 2" (5 cm).
      *
      */
-    ColorSensor colorSensor;
+    /* Declare OpMode members. */
+    BruinHardware    robot = new BruinHardware();
+    ModernRoboticsI2cGyro gyro=null;
+    /*ColorSensor colorSensor;
     DcMotor rightWheel;
     DcMotor leftWheel;
     Servo sensorServo;
     Servo leftServo;
     Servo rightServo;
+    Servo leftServo2;
+    Servo rightServo2;
+
+    leftWheel.setDirection(DcMotor.Direction.FORWARD);
+    rightWheel.setDirection(DcMotor.Direction.REVERSE);*/
 
     //Set-up omni wheels 7in away; normal wheels 4 1/2in away
 
@@ -83,11 +93,11 @@ public class BruinAutonomousBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     public void turnLeft (double turnSpeed, double seconds) {
-        leftWheel.setPower(-turnSpeed);
-        rightWheel.setPower(-turnSpeed);
+        robot.leftWheel.setPower(-turnSpeed);
+        robot.rightWheel.setPower(turnSpeed);
         sleep(Math.round(seconds*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -96,11 +106,11 @@ public class BruinAutonomousBlue extends LinearOpMode {
     }
 
     public void turnRight (double turnSpeed, double seconds) {
-        leftWheel.setPower(turnSpeed);
-        rightWheel.setPower(turnSpeed);
+        robot.leftWheel.setPower(-turnSpeed);
+        robot.rightWheel.setPower(turnSpeed);
         sleep(Math.round(seconds*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
         //runtime.reset();
         //while (opModeIsActive() && (runtime.seconds() < seconds)) {
           //  telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
@@ -109,11 +119,11 @@ public class BruinAutonomousBlue extends LinearOpMode {
     }
 
     public void goForward (double frwrdSpeed, double seconds) {
-        leftWheel.setPower(frwrdSpeed);
-        rightWheel.setPower(-frwrdSpeed);
+        robot.leftWheel.setPower(frwrdSpeed);
+        robot.rightWheel.setPower(frwrdSpeed);
         sleep(Math.round(seconds*1000));
-        leftWheel.setPower(0);
-        rightWheel.setPower(0);
+        robot.leftWheel.setPower(0);
+        robot.rightWheel.setPower(0);
         //This is untested... test it tomorrow @ tournament.
     }
 
@@ -122,12 +132,15 @@ public class BruinAutonomousBlue extends LinearOpMode {
     public void runOpMode() {
 
         // get a reference to the color sensor.
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        /*colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
         sensorServo = hardwareMap.get(Servo.class, "sensorServo");
         leftWheel = hardwareMap.get(DcMotor.class, "leftWheel");
         rightWheel = hardwareMap.get(DcMotor.class, "rightWheel");
         leftServo = hardwareMap.get(Servo.class, "leftServo");
         rightServo = hardwareMap.get(Servo.class, "rightServo");
+        leftServo2 = hwMap.get(Servo.class, "leftServo2");
+        rightServo2 = hwMap.get(Servo.class, "rightServo2");*/
+        robot.init(hardwareMap);
 
 
         // get a reference to the distance sensor that shares the same name.
@@ -151,48 +164,50 @@ public class BruinAutonomousBlue extends LinearOpMode {
         // wait for the start button to be pressed.
         waitForStart();
 
-        sensorServo.setPosition(0);
+        //robot.sensorServo.setPosition(0);
 
-        leftServo.setPosition(0.4);
-        rightServo.setPosition(0.6);
+        robot.leftServo.setPosition(0.4);
+        robot.leftServo2.setPosition(0.4);
+        robot.rightServo.setPosition(0.6);
+        robot.rightServo2.setPosition(0.6);
 
 
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
-            sensorServo.setPosition(0.67);
+        robot.sensorServo.setPosition(0.15);
 
             sleep(3000);
 
             // convert the RGB values to HSV values.
             // multiply by the SCALE_FACTOR.
             // then cast it back to int (SCALE_FACTOR is a double)
-            Color.RGBToHSV((int) (colorSensor.red() * SCALE_FACTOR),
-                    (int) (colorSensor.green() * SCALE_FACTOR),
-                    (int) (colorSensor.blue() * SCALE_FACTOR),
+            Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.green() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.blue() * SCALE_FACTOR),
                     hsvValues);
 
-            if (colorSensor.red() < colorSensor.blue()) {
-                telemetry.addData("Blue!!!!  ", colorSensor.red());
+            if (robot.colorSensor.red() < robot.colorSensor.blue()) {
+                telemetry.addData("Blue!!!!  ", robot.colorSensor.red());
                 turnLeft (0.15, 0.5);
                 sleep(1000);
-                sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0.9);
                 sleep(1000);
                 turnRight(0.15, 0.5);
                 sleep(1000);
-                leftWheel.setPower(0);
-                rightWheel.setPower(0);
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
             }
             else {
-                telemetry.addData("Red!!!!  ", colorSensor.blue());
+                telemetry.addData("Red!!!!  ", robot.colorSensor.blue());
                 turnRight(0.15, 0.5);
                 sleep(1000);
-                sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0.9);
                 sleep(1000);
                 turnLeft(0.15, 0.5);
                 sleep(1000);
-                leftWheel.setPower(0);
-                rightWheel.setPower(0);
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
             }
             sleep(2000);
             turnLeft (0.5, 0.6);
@@ -202,18 +217,18 @@ public class BruinAutonomousBlue extends LinearOpMode {
 
             telemetry.update();
             sleep(1000);
-            leftWheel.setPower(0);
-            rightWheel.setPower(0);
+            robot.leftWheel.setPower(0);
+            robot.rightWheel.setPower(0);
 
 
 
             // send the info back to driver station using telemetry function.
             //telemetry.addData("Distance (cm)",
                   //  String.format(Locale.US, "%.02f", sensorDistance.getDistance(DistanceUnit.CM)));
-            telemetry.addData("Alpha", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
+            telemetry.addData("Alpha", robot.colorSensor.alpha());
+            telemetry.addData("Red  ", robot.colorSensor.red());
+            telemetry.addData("Green", robot.colorSensor.green());
+            telemetry.addData("Blue ", robot.colorSensor.blue());
             telemetry.addData("Hue", hsvValues[0]);
 
             // change the background color to match the color detected by the RGB sensor.

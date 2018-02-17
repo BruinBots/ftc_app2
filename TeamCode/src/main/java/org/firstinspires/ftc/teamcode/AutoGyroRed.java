@@ -33,7 +33,9 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -43,6 +45,11 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /*
  * This is an example LinearOpMode that shows how to use
@@ -54,7 +61,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
 @Autonomous(name = "AutoGyroRed", group = "Rohan")
-//@Disabled                            // Comment this out to add to the opmode list
+//@Disabled                             // Comment this out to add to the opmode list
 public class AutoGyroRed extends LinearOpMode {
 
     /**
@@ -75,12 +82,15 @@ public class AutoGyroRed extends LinearOpMode {
      *
      */
 
-    ModernRoboticsI2cGyro sensorGyro;
+    //ModernRoboticsI2cGyro gyro;
 
 
     /* Declare OpMode members. */
     BruinHardware    robot = new BruinHardware();
-    ModernRoboticsI2cGyro gyro=null;
+    public BNO055IMU imu;
+
+    public Orientation angles;
+    public Acceleration gravity;
 
     private ElapsedTime period  = new ElapsedTime();
 
@@ -115,10 +125,10 @@ public class AutoGyroRed extends LinearOpMode {
 
     public double getError(double targetAngle) {
 
-        double robotError;
+        double robotError=0;
 
         // calculate error in -179 to +180 range  (
-        robotError = targetAngle - gyro.getIntegratedZValue();
+        robotError = targetAngle - angles.firstAngle;
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;
         return robotError;
@@ -273,15 +283,24 @@ public class AutoGyroRed extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit            = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled       = true;
+        parameters.useExternalCrystal   = true;
+        parameters.mode                 = BNO055IMU.SensorMode.IMU;
+        parameters.loggingTag           = "IMU";
+        imu                             = hardwareMap.get(BNO055IMU.class, "imu");
+
+        imu.initialize(parameters);
         // get a reference to the color sensor.
-        sensorGyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "sensorGyro");
+        robot.init(hardwareMap);
 
         telemetry.addData(">", "Robot Set.");
         telemetry.update();
 
-        sensorGyro.calibrate();
 
-        while (!isStopRequested() && sensorGyro.isCalibrating())  {
+        while (!isStopRequested() && imu.isGyroCalibrated())  {
             sleep(50);
             idle();
         }
@@ -289,15 +308,12 @@ public class AutoGyroRed extends LinearOpMode {
         telemetry.addData(">", "Gyro Calibrated.");
         telemetry.update();
 
-        while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", sensorGyro.getIntegratedZValue());
-            telemetry.update();
+        while (opModeIsActive())
+        {
+            angles  = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         }
 
-        sensorGyro.resetZAxisIntegrator();
 
-        // get a reference to the distance sensor that shares the same name.
-        //sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
@@ -317,14 +333,17 @@ public class AutoGyroRed extends LinearOpMode {
         // wait for the start button to be pressed.
         waitForStart();
 
-        robot.sensorServo.setPosition(0);
+        //robot.sensorServo.setPosition(0);
 
         robot.leftServo.setPosition(0.4);
+        robot.leftServo2.setPosition(0.4);
         robot.rightServo.setPosition(0.6);
+        robot.rightServo2.setPosition(0.6);
+
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
-            robot.sensorServo.setPosition(0.67);
+            robot.sensorServo.setPosition(0.15);
             sleep(3000);
 
             // convert the RGB values to HSV values.
@@ -337,22 +356,22 @@ public class AutoGyroRed extends LinearOpMode {
 
             if (robot.colorSensor.red() > robot.colorSensor.blue()) {
                 telemetry.addData("Red!!!!  ", robot.colorSensor.red());
-                gyroTurn (0.15, -10);
+                gyroTurn (0.15, -15);
                 sleep(1000);
-                robot.sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0.9);
                 sleep(1000);
-                gyroTurn(0.15, 10);
+                gyroTurn(0.15, 15);
                 sleep(1000);
                 robot.leftWheel.setPower(0);
                 robot.rightWheel.setPower(0);
             }
             else {
                 telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
-                gyroTurn(0.15, 10);
+                gyroTurn(0.15, 15);
                 sleep(1000);
-                robot.sensorServo.setPosition(0);
+                robot.sensorServo.setPosition(0.9);
                 sleep(1000);
-                gyroTurn(0.15, -10);
+                gyroTurn(0.15, -15);
                 sleep(1000);
                 robot.leftWheel.setPower(0);
                 robot.rightWheel.setPower(0);

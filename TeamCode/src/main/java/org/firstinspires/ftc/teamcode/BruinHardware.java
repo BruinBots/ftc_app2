@@ -56,6 +56,8 @@ public class BruinHardware {
         rightWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         forkLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        forkLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //leftServo.setPosition(MID_SERVO);
         //leftServo2.setPosition(MID_SERVO);
         //rightServo.setPosition(MID_SERVO);

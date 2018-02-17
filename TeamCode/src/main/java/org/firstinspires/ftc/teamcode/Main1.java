@@ -138,14 +138,14 @@ public class Main1 extends LinearOpMode {
                 robot.leftServo.setPosition(0.6);
                 robot.leftServo2.setPosition(0.6);
                 robot.rightServo.setPosition(0.4);
-                robot.rightServo2.setPosition(0.4);//Was 0.4???
+                robot.rightServo2.setPosition(0.4);
             }
             //opens servo
             else if (gamepad1.right_bumper) {
                 robot.leftServo.setPosition(0.4);
                 robot.leftServo2.setPosition(0.4);
                 robot.rightServo.setPosition(0.6);
-                robot.rightServo2.setPosition(0.6);//was 0.6???
+                robot.rightServo2.setPosition(0.6);
             }
 
 // ************* refresh data *********************** //

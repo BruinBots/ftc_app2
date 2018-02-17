@@ -60,9 +60,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Autonomous(name = "AutoGyroRed", group = "Rohan")
+@Autonomous(name = "AutoGyroRedRecoveryZone", group = "Rohan")
 //@Disabled                             // Comment this out to add to the opmode list
-public class AutoGyroRed extends LinearOpMode {
+public class AutoGyroRedRecoveryZone extends LinearOpMode {
 
 
     /* Declare OpMode members. */
@@ -95,7 +95,7 @@ public class AutoGyroRed extends LinearOpMode {
         int moveCounts;
 
         if (opModeIsActive())
-            robot.leftWheel.setPower(frwrdSpeed);
+        robot.leftWheel.setPower(frwrdSpeed);
         robot.rightWheel.setPower(frwrdSpeed);
         sleep(Math.round(seconds*1000));
         robot.leftWheel.setPower(0);
@@ -232,61 +232,65 @@ public class AutoGyroRed extends LinearOpMode {
         // loop and read the RGB and distance data.
         // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
         //while (opModeIsActive()) {
-        robot.sensorServo.setPosition(0.15); // Drop arm to between spheres
-        sleep(2000); // Let color sensor see color of sphere
+            robot.sensorServo.setPosition(0.15); // Drop arm to between spheres
+            sleep(2000); // Let color sensor see color of sphere
 
-        // convert the RGB values to HSV values.
-        // multiply by the SCALE_FACTOR.
-        // then cast it back to int (SCALE_FACTOR is a double)
-        Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
-                (int) (robot.colorSensor.green() * SCALE_FACTOR),
-                (int) (robot.colorSensor.blue() * SCALE_FACTOR),
-                hsvValues);
-        // If..Then..else to sense color of sphere
-        if (robot.colorSensor.red() > robot.colorSensor.blue()) {
-            telemetry.addData("Red!!!!  ", robot.colorSensor.red());
-            telemetry.update(); // Show operator what color is seen
-            gyroTurn (0.2, 15); // Turn 15 degrees away from Red
-            sleep(500);
-            robot.sensorServo.setPosition(0.9);
-            sleep(500);
-            gyroTurn(0.2, 0); // Turn back to original orientation
-            sleep(500);
-            // Could remove, ensure motors are stopped
-            robot.leftWheel.setPower(0);
-            robot.rightWheel.setPower(0);
-        }
-        else {
-            telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
-            telemetry.update();  // Show operator what color is seen
-            gyroTurn(0.2, -15); // Turn 15 degrees towards Blue
-            sleep(500);
-            robot.sensorServo.setPosition(0.9);
-            sleep(500);
-            gyroTurn(0.2, 0); // Turn back to original orientation
-            sleep(500);
-            // Could remove, ensure motors are stopped
-            robot.leftWheel.setPower(0);
-            robot.rightWheel.setPower(0);
+            // convert the RGB values to HSV values.
+            // multiply by the SCALE_FACTOR.
+            // then cast it back to int (SCALE_FACTOR is a double)
+            Color.RGBToHSV((int) (robot.colorSensor.red() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.green() * SCALE_FACTOR),
+                    (int) (robot.colorSensor.blue() * SCALE_FACTOR),
+                    hsvValues);
+            // If..Then..else to sense color of sphere
+            if (robot.colorSensor.red() > robot.colorSensor.blue()) {
+                telemetry.addData("Red!!!!  ", robot.colorSensor.red());
+                telemetry.update(); // Show operator what color is seen
+                gyroTurn (0.2, 15); // Turn 15 degrees away from Red
+                sleep(500);
+                robot.sensorServo.setPosition(0.9);
+                sleep(500);
+                gyroTurn(0.2, 0); // Turn back to original orientation
+                sleep(500);
+                // Could remove, ensure motors are stopped
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
+            }
+            else {
+                telemetry.addData("Blue!!!!  ", robot.colorSensor.blue());
+                telemetry.update();  // Show operator what color is seen
+                gyroTurn(0.2, -15); // Turn 15 degrees towards Blue
+                sleep(500);
+                robot.sensorServo.setPosition(0.9);
+                sleep(500);
+                gyroTurn(0.2, 0); // Turn back to original orientation
+                sleep(500);
+                // Could remove, ensure motors are stopped
+                robot.leftWheel.setPower(0);
+                robot.rightWheel.setPower(0);
 
-        }
+            }
 
-        sleep(500);
-        // *******************  This section changes depending on starting position************
-        // This version is for Red Team, away from the recovery zone
-        // Turn right towards cryptobox
-        gyroTurn(0.2, -70);
-        sleep(500);
-        //Drive into cryptobox
-        goForward(.4,10);
-        // *********************************************************************************
-        sleep(500);
-        //Open Grippers to release block
-        robot.leftServo.setPosition(0.6);
-        robot.leftServo2.setPosition(0.6);
-        robot.rightServo.setPosition(0.4);
-        robot.rightServo2.setPosition(0.4);
-        sleep(1000);
+            sleep(500);
+            // *******************  This section changes depending on starting position************
+            // This version is for Team Reg, starting near the recovery zone
+            // Turn right towards cryptobox
+            gyroTurn(0.2, -90);
+            sleep(500);
+            // Drive to vicinity of cryptobox
+            goForward(0.7, 2.5);
+            // Turn towards cryptobox
+            gyroTurn(0.2,-170);
+            //Drive into cryptobox
+            goForward(.4,5);
+            // *********************************************************************************
+            sleep(500);
+            //Open Grippers to release block
+            robot.leftServo.setPosition(0.6);
+            robot.leftServo2.setPosition(0.6);
+            robot.rightServo.setPosition(0.4);
+            robot.rightServo2.setPosition(0.4);
+            sleep(1000);
 
     }
 

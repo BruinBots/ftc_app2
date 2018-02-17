@@ -60,9 +60,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Autonomous(name = "AutoGyroRed", group = "Rohan")
+@Autonomous(name = "AutoGyroBlueRecoveryZone", group = "Rohan")
 //@Disabled                             // Comment this out to add to the opmode list
-public class AutoGyroRed extends LinearOpMode {
+public class AutoGyroBlueRecoveryZone extends LinearOpMode {
 
 
     /* Declare OpMode members. */
@@ -273,12 +273,16 @@ public class AutoGyroRed extends LinearOpMode {
 
         sleep(500);
         // *******************  This section changes depending on starting position************
-        // This version is for Red Team, away from the recovery zone
+        // This version is for Team Blue, starting near the recovery zone
         // Turn right towards cryptobox
-        gyroTurn(0.2, -70);
+        gyroTurn(0.2, 90);
         sleep(500);
+        // Drive to vicinity of cryptobox
+        goForward(0.7, 2.5);
+        // Turn towards cryptobox
+        gyroTurn(0.2,170);
         //Drive into cryptobox
-        goForward(.4,10);
+        goForward(.4,5);
         // *********************************************************************************
         sleep(500);
         //Open Grippers to release block

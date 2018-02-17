@@ -63,6 +63,7 @@ import java.util.Locale;
         String formatDegrees(double degrees)
         {
             return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+
         }
     }
 

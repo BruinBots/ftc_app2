@@ -59,7 +59,7 @@ import org.firstinspires.ftc.teamcode.HardwareBruinbot;
  */
 
 @TeleOp(name="Bruinbot: Teleop POV", group="Vince")
-//@Disabled
+@Disabled
 public class BearBotTeleOp extends LinearOpMode {
 
     /* Declare OpMode members. */

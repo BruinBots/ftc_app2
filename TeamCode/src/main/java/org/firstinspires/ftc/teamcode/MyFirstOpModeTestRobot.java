@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+@Disabled
 @TeleOp(name="TestRobotOpmode", group="Coach Vince")
 public class MyFirstOpModeTestRobot extends LinearOpMode {
     private Gyroscope imu;
